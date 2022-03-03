@@ -10,13 +10,11 @@ namespace Aes256CbcEncrypterApp
         private static readonly string key = "728378c43ebb41df9495bc090ecf54af";
         private static readonly string initVector = key[..16];
 
-        private static AesManaged CreateAes()
+        private static Aes CreateAes()
         {
-            using AesManaged aes = new()
-            {
-                Key = Encoding.UTF8.GetBytes(key),
-                IV = Encoding.UTF8.GetBytes(initVector)
-            };
+            var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(key);
+            aes.IV = Encoding.UTF8.GetBytes(initVector);
             return aes;
         }
 
