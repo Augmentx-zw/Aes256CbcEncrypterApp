@@ -7,20 +7,16 @@ namespace Aes256CbcEncrypterApp
 {
     internal class Program
     {
-        private static readonly string key = "728378c43ebb41df9495bc090ecf54af";
-        private static readonly string initVector = key[..16];
-
-        private static Aes CreateAes()
-        {
-            var aes = Aes.Create("AesManaged");
-            aes.Key = Encoding.UTF8.GetBytes(key);
-            aes.IV = Encoding.UTF8.GetBytes(initVector);
-            return aes;
-        }
+        //replace the _key value with your key
+        private static readonly string _key = "1123y13y132y13y132y132y13y123y1u";
+        private static readonly string _initVector = _key[..16];
 
         public static string Encrypt(string text)
         {
-            using var aes = CreateAes();
+            var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(_key);
+            aes.IV = Encoding.UTF8.GetBytes(_initVector);
+            aes.Mode = CipherMode.CBC;
             ICryptoTransform encryptor = aes.CreateEncryptor();
             using MemoryStream ms = new();
             using CryptoStream cs = new(ms, encryptor, CryptoStreamMode.Write);
@@ -28,15 +24,18 @@ namespace Aes256CbcEncrypterApp
             {
                 sw.Write(text);
             }
-
             return Convert.ToBase64String(ms.ToArray());
         }
 
         public static string Decrypt(string text)
         {
-            using var aes = CreateAes();
+            var aes = Aes.Create("AesManaged");
+            aes.Key = Encoding.UTF8.GetBytes(_key);
+            aes.IV = Encoding.UTF8.GetBytes(_initVector);
+            aes.Mode = CipherMode.CBC;
             ICryptoTransform decryptor = aes.CreateDecryptor();
             using MemoryStream ms = new(Convert.FromBase64String(text));
+            aes.Padding = PaddingMode.Zeros;
             using CryptoStream cs = new(ms, decryptor, CryptoStreamMode.Read);
             using StreamReader reader = new(cs);
             return reader.ReadToEnd();
